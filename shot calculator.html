@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Foursomes Handicap Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 700px;
+      margin: 2rem auto;
+      padding: 1rem;
+      background: #f9f9f9;
+    }
+    h1 {
+      text-align: center;
+      font-size: 1.5rem;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 0.5rem;
+      font-size: 1rem;
+      margin-top: 0.25rem;
+    }
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      margin-top: 1.5rem;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #result {
+      margin-top: 2rem;
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
+    pre {
+      background: #eeeeee;
+      padding: 1rem;
+      white-space: pre-wrap;
+      border-radius: 4px;
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Foursomes Match Play Handicap Calculator</h1>
+
+  <label>Team A - Player 1</label>
+  <input type="number" id="teamA1" step="any" />
+
+  <label>Team A - Player 2</label>
+  <input type="number" id="teamA2" step="any" />
+
+  <label>Team B - Player 1</label>
+  <input type="number" id="teamB1" step="any" />
+
+  <label>Team B - Player 2</label>
+  <input type="number" id="teamB2" step="any" />
+
+  <button onclick="calculateShots()">Calculate Shots</button>
+
+  <div id="result"></div>
+  <pre id="explanation"></pre>
+
+  <script>
+    function calculateShots() {
+      const p1 = parseFloat(document.getElementById('teamA1').value);
+      const p2 = parseFloat(document.getElementById('teamA2').value);
+      const p3 = parseFloat(document.getElementById('teamB1').value);
+      const p4 = parseFloat(document.getElementById('teamB2').value);
+
+      if ([p1, p2, p3, p4].some(isNaN)) {
+        document.getElementById("result").textContent = "Please enter valid handicaps for all players.";
+        document.getElementById("explanation").textContent = "";
+        return;
+      }
+
+      const teamA_avg = (p1 + p2) / 2;
+      const teamB_avg = (p3 + p4) / 2;
+
+      const teamA_adj = Math.round(teamA_avg * 10) / 10;
+      const teamB_adj = Math.round(teamB_avg * 10) / 10;
+
+      let resultText = `Handicaps — Team A: ${teamA_adj}, Team B: ${teamB_adj}. `;
+      let explanation = `Team A average: (${p1} + ${p2}) / 2 = ${teamA_avg.toFixed(1)} → rounded = ${teamA_adj}\n`;
+      explanation += `Team B average: (${p3} + ${p4}) / 2 = ${teamB_avg.toFixed(1)} → rounded = ${teamB_adj}\n`;
+
+      if (teamA_adj > teamB_adj) {
+        const shots = Math.ceil(teamA_adj - teamB_adj);
+        resultText += `Team A receives ${shots} shot(s).`;
+        explanation += `Difference = ${teamA_adj} - ${teamB_adj} = ${(teamA_adj - teamB_adj).toFixed(1)} → rounded up = ${shots}`;
+      } else if (teamB_adj > teamA_adj) {
+        const shots = Math.ceil(teamB_adj - teamA_adj);
+        resultText += `Team B receives ${shots} shot(s).`;
+        explanation += `Difference = ${teamB_adj} - ${teamA_adj} = ${(teamB_adj - teamA_adj).toFixed(1)} → rounded up = ${shots}`;
+      } else {
+        resultText += "No shots given. Teams play off scratch.";
+        explanation += "Averages are equal — no shots given.";
+      }
+
+      document.getElementById("result").textContent = resultText;
+      document.getElementById("explanation").textContent = explanation;
+    }
+  </script>
+
+</body>
+</html>
